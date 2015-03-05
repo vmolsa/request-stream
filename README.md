@@ -3,6 +3,47 @@ REST Stream
 
 Request / Response, Session, Stream events through regular NodeJS stream
 
+# Client Example
+
+``````````
+var net = require('net');
+var restStream = require('rest-stream');
+
+var socket = net.connect({ host: 'localhost', port: 1337 }, function() {
+  var rest = new restStream(socket);
+
+  rest.newRequest('ping', '!!!THIS IS PAYLOAD!!!', function(reply) {
+    console.log(reply);
+    rest.end();
+  });
+});
+
+socket.on('close', function() {
+  console.log('Disconnected...');
+});
+``````````
+
+# Server Example
+
+``````````
+var net = require('net');
+var restStream = require('rest-stream');
+
+var server = net.createServer(function(socket) {
+  var rest = new restStream(socket);
+
+  rest.onRequest('ping', function(payload, callback) {
+    console.log(payload);
+    callback(payload);
+  });
+});
+
+server.listen({
+  host: 'localhost',
+  port: 1337,
+});
+``````````
+
 # Prototype
 
 ``````````
@@ -28,30 +69,24 @@ rest.newStream('event', [arg1, [arg2, [arg3, [...]]]]], callback(session))
 rest.offRequest('event')
 rest.offSession('event')
 rest.offStream('event')
-
 ``````````
 
 # Events
 
 ``````````
-
 'error', callback(error)
 'close', callback()
 'end',   callback()
-
 ``````````
 
 # Session Prototype
-
 ``````````
-
 session.on('event', callback([arg1, [arg2, [arg3, [... [callback]]]]]]))
 session.off('event', [callback])
 
 session.end()
 
 session.newRequest('event', [arg1, [arg2, [arg3, [...]]]]], [callback([reply])])
-
 ``````````
 
 # Stream Prototype
