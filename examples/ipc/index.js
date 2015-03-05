@@ -1,43 +1,43 @@
 var cluster = require('cluster');
-var requestStream = require('../../index.js');
+var restStream = require('../../index.js');
 
 if (cluster.isMaster) {
   cluster.fork();
   
   cluster.on('online', function(worker) {
-    var req = new requestStream();
+    var rest = new restStream();
     
-    req.setEncoding('hex');
+    rest.setEncoding('hex');
     
-    req.on('end', function() {
+    rest.on('end', function() {
       worker.kill();
     });
     
-    req.on('data', function(message) {
+    rest.on('data', function(message) {
       worker.send(message);
     });
     
     worker.on('message', function(message) {
-      req.write(message, 'hex');
+      rest.write(message, 'hex');
     });
     
-    req.on('error', function(error) {
+    rest.on('error', function(error) {
       console.log(error);
     });
     
-    req.newRequest('runScript', './runSuccess.js', function(error) {
+    rest.newRequest('runScript', './runSuccess.js', function(error) {
       if (error) {
         console.log('runScript Error:', error);
       }
     });
     
-    req.newRequest('runScript', './runFailure.js', function(error) {
+    rest.newRequest('runScript', './runFailure.js', function(error) {
       if (error) {
         console.log('runScript Error:', error);
       }
     });
     
-    req.newSession('convertImage', function(session) {
+    rest.newSession('convertImage', function(session) {
       if (!session) {
         return false;
       }
@@ -45,7 +45,7 @@ if (cluster.isMaster) {
       console.log('Transforming Image');
       
       session.on('end', function() {
-        req.end();
+        rest.end();
       });
       
       session.newRequest('newTask', function(id) {
@@ -53,7 +53,7 @@ if (cluster.isMaster) {
           return session.end();
         }
         
-        req.newStream('imageUpload', id, function(stream) {
+        rest.newStream('imageUpload', id, function(stream) {
           console.log('Uploading image');
           
           stream.end('... image data ....');
@@ -77,23 +77,23 @@ if (cluster.isMaster) {
     });
   });
 } else {
-  var req = new requestStream();
+  var rest = new restStream();
   
-  req.setEncoding('hex');
+  rest.setEncoding('hex');
   
   process.on('message', function(message) {
-    req.write(message, 'hex');
+    rest.write(message, 'hex');
   });
 
-  req.on('data', function(message) {
+  rest.on('data', function(message) {
     process.send(message);
   });
   
-  req.on('error', function(error) {
+  rest.on('error', function(error) {
     console.log(error);
   });
   
-  req.onRequest('runScript', function(filename, callback) {
+  rest.onRequest('runScript', function(filename, callback) {
     var script = null;
     
     try {
@@ -138,7 +138,7 @@ if (cluster.isMaster) {
     }
   }
   
-  req.onStream('imageUpload', function(stream, id) {
+  rest.onStream('imageUpload', function(stream, id) {
     var task = getTask(id);
     
     if (!task) {
@@ -162,7 +162,7 @@ if (cluster.isMaster) {
     });
   });
 
-  req.onSession('convertImage', function(session) {
+  rest.onSession('convertImage', function(session) {
     var id = newTask();
     
     setTaskNotify(id, function() {

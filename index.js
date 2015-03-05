@@ -3,27 +3,27 @@
  *
  * API
  *  
- *   var req = new requestStream([stream]) // returns Stream object
+ *   var rest = new restStream([stream]) // returns Stream object
  *   
- *   req.write(data, encoding, callback)
- *   req.end(data, encoding, callback)
- *   req.setTimeout(timeout)
- *   req.setEncoding(encoding)
+ *   rest.write(data, encoding, callback)
+ *   rest.end(data, encoding, callback)
+ *   rest.setTimeout(timeout)
+ *   rest.setEncoding(encoding)
  *
- *   req.on('event', callback)
- *   req.off('event', [callback])
+ *   rest.on('event', callback)
+ *   rest.off('event', [callback])
  *
- *   req.onRequest('event', callback([arg1, [arg2, [arg3, [... [callback]]]]]]))
- *   req.onSession('event', callback(session, [arg1, [arg2, [arg3, [...]]]]]))
- *   req.onStream('event', callback(stream, [arg1, [arg2, [arg3, [...]]]]]))
+ *   rest.onRequest('event', callback([arg1, [arg2, [arg3, [... [callback]]]]]]))
+ *   rest.onSession('event', callback(session, [arg1, [arg2, [arg3, [...]]]]]))
+ *   rest.onStream('event', callback(stream, [arg1, [arg2, [arg3, [...]]]]]))
  *
- *   req.newRequest('event', [arg1, [arg2, [arg3, [...]]]]], [callback([reply])])
- *   req.newSession('event', [arg1, [arg2, [arg3, [...]]]]], callback(session))
- *   req.newStream('event', [arg1, [arg2, [arg3, [...]]]]], callback(session))
+ *   rest.newRequest('event', [arg1, [arg2, [arg3, [...]]]]], [callback([reply])])
+ *   rest.newSession('event', [arg1, [arg2, [arg3, [...]]]]], callback(session))
+ *   rest.newStream('event', [arg1, [arg2, [arg3, [...]]]]], callback(session))
  *
- *   req.offRequest('event')
- *   req.offSession('event')
- *   req.offStream('event')
+ *   rest.offRequest('event')
+ *   rest.offSession('event')
+ *   rest.offStream('event')
  * 
  * EVENTS
  *
@@ -44,7 +44,7 @@
  *  
  *  http://nodejs.org/api/stream.html
  *
- * Session.on || onRequest
+ * rest.onRequest || Session.on
  * 
  *  response callback is last argument of callback function if client is waiting reply from request.
  *
@@ -106,7 +106,7 @@
     throw error;
   }
   
-  function requestStream(socket) {
+  function restStream(socket) {
     var self = this;
     native_stream.call(self);
     
@@ -382,13 +382,13 @@
     }
   }
   
-  _.extend(requestStream.prototype, native_stream.prototype);
+  _.extend(restStream.prototype, native_stream.prototype);
 
-  if (!_.isFunction(requestStream.prototype.off)) {
-    requestStream.prototype.off = requestStream.prototype.removeListener;
+  if (!_.isFunction(restStream.prototype.off)) {
+    restStream.prototype.off = restStream.prototype.removeListener;
   }
   
-  requestStream.prototype.write = function(packet, encoding, callback) {
+  restStream.prototype.write = function(packet, encoding, callback) {
     var self = this;
     var data = null;    
     
@@ -626,49 +626,49 @@
     }
   };
 
-  requestStream.prototype.setTimeout = function(wait) {
+  restStream.prototype.setTimeout = function(wait) {
     if (_.isNumber(wait)) {
       this._waitTime = wait;
     }
   };
 
-  requestStream.prototype.onRequest = function(event, callback) {
+  restStream.prototype.onRequest = function(event, callback) {
     if (_.isString(event) && _.isFunction(callback)) {
       this._onRequest[event] = callback;
     }
   };
   
-  requestStream.prototype.offRequest = function(event) {
+  restStream.prototype.offRequest = function(event) {
     if (_.isString(event) && this._onRequest[event]) {
       delete this._onRequest[event];
     }
   };
 
-  requestStream.prototype.onSession = function(event, callback) {
+  restStream.prototype.onSession = function(event, callback) {
     if (_.isString(event) && _.isFunction(callback)) {
       this._onSession[event] = callback;
     }
   };
   
-  requestStream.prototype.offSession = function(event) {
+  restStream.prototype.offSession = function(event) {
     if (_.isString(event) && this._onSession[event]) {
       delete this._onSession[event];
     }
   };
 
-  requestStream.prototype.onStream = function(event, callback) {
+  restStream.prototype.onStream = function(event, callback) {
     if (_.isString(event) && _.isFunction(callback)) {
       this._onStream[event] = callback;
     }
   };
 
-  requestStream.prototype.offStream = function(event) {
+  restStream.prototype.offStream = function(event) {
     if (_.isString(event) && this._onStream[event]) {
       delete this._onStream[event];
     }
   };
 
-  requestStream.prototype.end = function() {
+  restStream.prototype.end = function() {
     var self = this;
     
     if (self._isAlive) {
@@ -697,7 +697,7 @@
     self.removeAllListeners();
   };
 
-  requestStream.prototype.newRequest = function(event) {
+  restStream.prototype.newRequest = function(event) {
     var self = this;
 
     if (_.isString(event)) {
@@ -729,7 +729,7 @@
     }
   };
 
-  requestStream.prototype.newSession = function(event, callback) {
+  restStream.prototype.newSession = function(event, callback) {
     var self = this;
 
     if (_.isString(event)) {
@@ -759,7 +759,7 @@
     }
   };
   
-  requestStream.prototype.newStream = function(event, callback) {
+  restStream.prototype.newStream = function(event, callback) {
     var self = this;
     
     if (_.isString(event)) {
@@ -789,7 +789,7 @@
     }
   };
   
-  requestStream.prototype.setEncoding = function(encoding) {
+  restStream.prototype.setEncoding = function(encoding) {
     var self = this;
     
     if (_.isString(encoding)) {
@@ -803,5 +803,5 @@
     return false;
   };
 
-  module.exports = requestStream;
+  module.exports = restStream;
 })();

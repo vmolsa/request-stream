@@ -1,10 +1,10 @@
 var net = require('net');
-var requestStream = require('../../index.js');
+var restStream = require('../../index.js');
 
 var socket = net.connect({ host: 'localhost', port: 1337 }, function() {
-  var req = new requestStream(socket);
+  var rest = new restStream(socket);
   
-  req.newStream('readPasswd', function(stream) {
+  rest.newStream('readPasswd', function(stream) {
     if (stream) {
       stream.pipe(process.stdout);
       
@@ -18,18 +18,18 @@ var socket = net.connect({ host: 'localhost', port: 1337 }, function() {
     }
   });
   
-  req.newRequest('ping', '!!!THIS IS PAYLOAD!!!', function(reply) {
+  rest.newRequest('ping', '!!!THIS IS PAYLOAD!!!', function(reply) {
     console.log(reply);
   });
   
-  req.newSession('db', function(session) {
+  rest.newSession('db', function(session) {
     if (!session) {
       return;
     }
     
     session.on('end', function() {
       console.log('Session ended...');
-      req.end();
+      rest.end();
     });
     
     session.newRequest('getUsers', function(users) {
@@ -55,7 +55,7 @@ var socket = net.connect({ host: 'localhost', port: 1337 }, function() {
     });
   });
   
-  req.on('error', function(error) {
+  rest.on('error', function(error) {
     console.log(error.toString());
   });
 });

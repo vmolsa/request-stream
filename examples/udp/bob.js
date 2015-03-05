@@ -1,32 +1,32 @@
 var dgram = require('dgram');
 var socket = dgram.createSocket('udp4');
-var requestStream = require('../../index.js');
+var restStream = require('../../index.js');
 
-var req = new requestStream(socket);
+var rest = new restStream(socket);
 
-req.on('data', function(message) {
+rest.on('data', function(message) {
   socket.send(message, 0, message.length, 1338, 'localhost', function(error) {
     if (error) {
-      req.end();
+      rest.end();
     }
   });
 });
 
-req.on('end', function() {
+rest.on('end', function() {
   socket.close();
 });
 
 socket.on('message', function(message, rinfo) {
-  req.write(message);
+  rest.write(message);
 });
 
 socket.bind(1337);
 
-req.newRequest('concat', 'Hello', 'World', 12345, function(reply) {
+rest.newRequest('concat', 'Hello', 'World', 12345, function(reply) {
   console.log(reply);
   
-  req.newRequest('exit', function(message) {
+  rest.newRequest('exit', function(message) {
     console.log(message);
-    req.end();
+    rest.end();
   });  
 });

@@ -1,33 +1,33 @@
-requestStream
-=============
+REST Stream
+===========
 
 Request / Response, Session, Stream events through regular NodeJS stream
 
 # Prototype
 
 ``````````
-var requestStream = require('request-stream');
-var req = new requestStream([stream])
+var restStream = require('rest-stream');
+var rest = new restStream([stream])
    
-req.write(data, encoding, callback)
-req.end(data, encoding, callback)
-req.setTimeout(timeout)
-req.setEncoding(encoding)
+rest.write(data, encoding, callback)
+rest.end(data, encoding, callback)
+rest.setTimeout(timeout)
+rest.setEncoding(encoding)
 
-req.on('event', callback)
-req.off('event', [callback])
+rest.on('event', callback)
+rest.off('event', [callback])
 
-req.onRequest('event', callback([arg1, [arg2, [arg3, [... [callback]]]]]]))
-req.onSession('event', callback(session, [arg1, [arg2, [arg3, [...]]]]]))
-req.onStream('event', callback(stream, [arg1, [arg2, [arg3, [...]]]]]))
+rest.onRequest('event', callback([arg1, [arg2, [arg3, [... [callback]]]]]]))
+rest.onSession('event', callback(session, [arg1, [arg2, [arg3, [...]]]]]))
+rest.onStream('event', callback(stream, [arg1, [arg2, [arg3, [...]]]]]))
 
-req.newRequest('event', [arg1, [arg2, [arg3, [...]]]]], [callback([reply])])
-req.newSession('event', [arg1, [arg2, [arg3, [...]]]]], callback(session))
-req.newStream('event', [arg1, [arg2, [arg3, [...]]]]], callback(session))
+rest.newRequest('event', [arg1, [arg2, [arg3, [...]]]]], [callback([reply])])
+rest.newSession('event', [arg1, [arg2, [arg3, [...]]]]], callback(session))
+rest.newStream('event', [arg1, [arg2, [arg3, [...]]]]], callback(session))
 
-req.offRequest('event')
-req.offSession('event')
-req.offStream('event')
+rest.offRequest('event')
+rest.offSession('event')
+rest.offStream('event')
 
 ``````````
 
@@ -58,7 +58,7 @@ session.newRequest('event', [arg1, [arg2, [arg3, [...]]]]], [callback([reply])])
 
 http://nodejs.org/api/stream.html
 
-# Session.on || req.onRequest
+# rest.onRequest || Session.on
 
 response callback is last argument of callback function if client is waiting reply from request.
 

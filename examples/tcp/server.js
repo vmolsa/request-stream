@@ -1,15 +1,15 @@
 var fs = require('fs');
 var net = require('net');
-var requestStream = require('../../index.js');
+var restStream = require('../../index.js');
 
 var server = net.createServer(function(socket) {
-  var req = new requestStream(socket);
+  var rest = new restStream(socket);
 
-  req.on('end', function() {
+  rest.on('end', function() {
     console.log('requests ended...');
   });
   
-  req.onStream('readPasswd', function(stream) {
+  rest.onStream('readPasswd', function(stream) {
     fs.createReadStream('/etc/passwd').pipe(stream);
     
     stream.on('end', function() {
@@ -21,13 +21,13 @@ var server = net.createServer(function(socket) {
     });
   });
   
-  req.onRequest('ping', function(payload, callback) {
+  rest.onRequest('ping', function(payload, callback) {
     console.log(payload);
     
     callback(payload);
   });
   
-  req.onSession('db', function(session) {
+  rest.onSession('db', function(session) {
     session.on('getUsers', function(callback) {
       setTimeout(function() {
         callback([ 'alice', 'bob', 'nobody' ]);
@@ -57,7 +57,7 @@ var server = net.createServer(function(socket) {
     });
   });
   
-  req.on('error', function(error) {
+  rest.on('error', function(error) {
     console.log(error.toString());
   });
 });
