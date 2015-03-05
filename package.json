@@ -1,0 +1,14 @@
+{
+  "name": "request-stream",
+  "description": "Request / Response, Session, Stream events through regular NodeJS stream",
+  "version": "1.0.0",
+  "main": "./index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vmolsa/request-stream"
+  },
+  "author": "vmolsa <ville.molsa@gmail.com> (http://github.com/vmolsa)",
+  "dependencies": {
+    "underscore": "^1.8.2"
+  }
+}
