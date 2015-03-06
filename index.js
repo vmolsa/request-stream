@@ -532,9 +532,17 @@
   _.extend(Stream.prototype, native_stream.prototype);
 
   Stream.prototype.setEncoding = function(encoding) {
+    var self = this;
+    
     if (_.isString(encoding)) {
-      this._encoding = encoding;  
+      if (native_buffer.isEncoding(encoding) || encoding == 'buffer') {
+        self._encoding = encoding;
+        
+        return encoding;
+      }
     }
+    
+    return false;
   };
   
   Stream.prototype.write = function(msg, encoding, callback) {
