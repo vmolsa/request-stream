@@ -553,7 +553,7 @@
         data = msg;
       } else {
         if (_.isString(msg)) {
-          data = new native_buffer(msg);
+          data = new native_buffer(msg, encoding);
         } else {
           data = new native_buffer(JSON.stringify(msg));
         }
