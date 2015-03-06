@@ -546,6 +546,7 @@
     if (socket) {
       if (_.isFunction(encoding)) {
         callback = encoding;
+        encoding = null;
       }
 
       if (native_buffer.isBuffer(msg)) {
@@ -587,7 +588,7 @@
 
     if (_.isFunction(encoding)) {
       callback = encoding;
-      encoding = 'buffer';
+      encoding = null;
     }  
 
     if (msg) {
@@ -668,8 +669,19 @@
     }
   };
 
-  restStream.prototype.end = function() {
+  restStream.prototype.end = function(msg, encoding, callback) {
     var self = this;
+    
+    if (_.isFunction(encoding)) {
+      callback = encoding;
+      encoding = null;
+    }  
+
+    if (msg) {
+      return self.write(msg, encoding, function() {
+        self.end(null, null, callback);
+      });
+    }    
     
     if (self._isAlive) {
       writeToSocket(self, {
@@ -695,6 +707,10 @@
     self.emit('end');
     self.emit('close');
     self.removeAllListeners();
+    
+    if (_.isFunction(callback)) {
+      callback();
+    }
   };
 
   restStream.prototype.newRequest = function(event) {
