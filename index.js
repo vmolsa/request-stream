@@ -124,6 +124,14 @@
         socket.pipe(self).pipe(socket);
       } else {
         if (_.isFunction(socket.pipe)) {
+          socket.once('end', function() {
+            self.end();
+          });
+          
+          self.once('end', function() {
+            socket.end();
+          });
+          
           socket.on('data', function(data) {
             self.write(data);
           });
