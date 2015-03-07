@@ -119,8 +119,20 @@
     self._onSession = {};
     self._onStream = {};
     
-    if (_.isObject(socket) && socket instanceof native_stream) {
-      socket.pipe(self).pipe(socket);
+    if (_.isObject(socket)) {
+      if (socket instanceof native_stream) {
+        socket.pipe(self).pipe(socket);
+      } else {
+        if (_.isFunction(socket.pipe)) {
+          socket.on('data', function(data) {
+            self.write(data);
+          });
+
+          self.on('data', function(data) {
+            socket.write(data);
+          });
+        }
+      }
     }
   }
   
@@ -714,7 +726,7 @@
     self.emit('finish');
     self.emit('end');
     self.emit('close');
-    //self.removeAllListeners();
+    self.removeAllListeners();
     
     if (_.isFunction(callback)) {
       callback();
