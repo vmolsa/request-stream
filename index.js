@@ -119,28 +119,11 @@
     self._onSession = {};
     self._onStream = {};
     
-    if (_.isObject(socket)) {
-      if (socket instanceof native_stream) {
-        socket.pipe(self).pipe(socket);
-      } else {
-        if (_.isFunction(socket.pipe)) {
-          socket.once('end', function() {
-            self.end();
-          });
-          
-          self.once('end', function() {
-            socket.end();
-          });
-          
-          socket.on('data', function(data) {
-            self.write(data);
-          });
-
-          self.on('data', function(data) {
-            socket.write(data);
-          });
-        }
-      }
+    self.writable = true;
+    self.readable = true;
+    
+    if (_.isObject(socket) && _.isFunction(socket.pipe)) {
+      socket.pipe(self).pipe(socket);
     }
   }
   

@@ -1,7 +1,7 @@
 {
   "name": "rest-stream",
   "description": "Request / Response, Session, Stream events through regular NodeJS stream",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "main": "./index.js",
   "repository": {
     "type": "git",
