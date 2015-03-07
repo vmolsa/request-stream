@@ -714,7 +714,7 @@
     self.emit('finish');
     self.emit('end');
     self.emit('close');
-    self.removeAllListeners();
+    //self.removeAllListeners();
     
     if (_.isFunction(callback)) {
       callback();
